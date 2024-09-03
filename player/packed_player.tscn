@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://dxcbv1gkwim7d"]
+
+[ext_resource type="PackedScene" uid="uid://bb6fu5n5x5l4l" path="res://player/player.tscn" id="1_h1fir"]
+[ext_resource type="Script" path="res://scripts/camera.gd" id="2_hwxef"]
+
+[node name="PackedPlayer" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("1_h1fir")]
+
+[node name="CameraLock" type="Node2D" parent="." node_paths=PackedStringArray("player")]
+script = ExtResource("2_hwxef")
+player = NodePath("../Player")
+
+[node name="Camera2D" type="Camera2D" parent="CameraLock"]
+position = Vector2(0, -150)
+
+[node name="PlayerUI" type="CanvasLayer" parent="."]
+
+[node name="Timer" type="Timer" parent="PlayerUI"]
+wait_time = 0.1
+autostart = true

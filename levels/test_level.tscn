@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://jixjah186mgf"]
+
+[ext_resource type="PackedScene" uid="uid://8mnklhwexdq1" path="res://objects/plateform.tscn" id="1_4xvrj"]
+[ext_resource type="PackedScene" uid="uid://dxcbv1gkwim7d" path="res://player/packed_player.tscn" id="2_boudh"]
+
+[node name="TestLevel" type="Node2D"]
+
+[node name="Map" type="Node2D" parent="."]
+
+[node name="Plateform" parent="Map" instance=ExtResource("1_4xvrj")]
+position = Vector2(1480, 349)
+scale = Vector2(1.08125, 0.384877)
+
+[node name="Plateform2" parent="Map" instance=ExtResource("1_4xvrj")]
+position = Vector2(108, 666)
+scale = Vector2(1.48252, 0.583911)
+
+[node name="PackedPlayer" parent="." instance=ExtResource("2_boudh")]

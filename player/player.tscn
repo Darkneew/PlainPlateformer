@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://bb6fu5n5x5l4l"]
+
+[ext_resource type="Texture2D" uid="uid://bmfh4xyqm6f0d" path="res://ressources/black_rectangle.png" id="1_v2s8m"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_wv7yv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_unjv5"]
+size = Vector2(79.5, 144)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7vx5l"]
+size = Vector2(20, 89)
+
+[node name="Player" type="CharacterBody2D"]
+floor_stop_on_slope = false
+script = ExtResource("1_wv7yv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("1_v2s8m")
+
+[node name="PhysicalMesh" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-34, -80, 34, -80, 48, -67, 48, 67, 34, 80, -34, 80, -48, 67, -48, -67)
+
+[node name="Hitbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+shape = SubResource("RectangleShape2D_unjv5")
+
+[node name="Arms" type="Node2D" parent="."]
+
+[node name="Left" type="Area2D" parent="Arms"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arms/Left"]
+position = Vector2(46, 0)
+shape = SubResource("RectangleShape2D_7vx5l")
+
+[node name="Right" type="Area2D" parent="Arms"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Arms/Right"]
+position = Vector2(-46, 0)
+shape = SubResource("RectangleShape2D_7vx5l")
