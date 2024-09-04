@@ -15,4 +15,8 @@ scale = Vector2(1.08125, 0.384877)
 position = Vector2(108, 666)
 scale = Vector2(1.48252, 0.583911)
 
+[node name="Plateform3" parent="Map" instance=ExtResource("1_4xvrj")]
+position = Vector2(-1126, 39)
+scale = Vector2(0.406527, 5.34207)
+
 [node name="PackedPlayer" parent="." instance=ExtResource("2_boudh")]

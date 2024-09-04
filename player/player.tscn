@@ -10,6 +10,7 @@ size = Vector2(79.5, 144)
 size = Vector2(20, 89)
 
 [node name="Player" type="CharacterBody2D"]
+collision_mask = 2
 floor_stop_on_slope = false
 script = ExtResource("1_wv7yv")
 
@@ -21,6 +22,8 @@ texture = ExtResource("1_v2s8m")
 polygon = PackedVector2Array(-34, -80, 34, -80, 48, -67, 48, 67, 34, 80, -34, 80, -48, 67, -48, -67)
 
 [node name="Hitbox" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 12
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
 shape = SubResource("RectangleShape2D_unjv5")
@@ -28,13 +31,27 @@ shape = SubResource("RectangleShape2D_unjv5")
 [node name="Arms" type="Node2D" parent="."]
 
 [node name="Left" type="Area2D" parent="Arms"]
+collision_layer = 0
+collision_mask = 16
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Arms/Left"]
 position = Vector2(46, 0)
 shape = SubResource("RectangleShape2D_7vx5l")
 
 [node name="Right" type="Area2D" parent="Arms"]
+collision_layer = 0
+collision_mask = 16
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Arms/Right"]
 position = Vector2(-46, 0)
 shape = SubResource("RectangleShape2D_7vx5l")
+
+[node name="Buffer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+
+[connection signal="body_entered" from="Arms/Left" to="." method="on_left_arm_enter"]
+[connection signal="body_exited" from="Arms/Left" to="." method="on_left_arm_exit"]
+[connection signal="body_entered" from="Arms/Right" to="." method="on_right_arm_enter"]
+[connection signal="body_exited" from="Arms/Right" to="." method="on_right_arm_exit"]
+[connection signal="timeout" from="Buffer" to="." method="on_buffer_timeout"]
