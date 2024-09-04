@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://bb6fu5n5x5l4l"]
+[gd_scene load_steps=9 format=3 uid="uid://bb6fu5n5x5l4l"]
 
 [ext_resource type="Texture2D" uid="uid://bmfh4xyqm6f0d" path="res://ressources/black_rectangle.png" id="1_v2s8m"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_wv7yv"]
@@ -7,7 +7,97 @@
 size = Vector2(79.5, 144)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7vx5l"]
-size = Vector2(20, 89)
+size = Vector2(20, 68.5)
+
+[sub_resource type="Animation" id="Animation_cf0vx"]
+resource_name = "blink"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.266667, 0.5),
+"transitions": PackedFloat32Array(0.217637, 4.59479, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.27451), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_itd86"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_vvuct"]
+resource_name = "death"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [0.0, 1.5708, 4.71239, 7.85398, 10.9956, 14.1372]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1e-05, 1e-05)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ciqsh"]
+_data = {
+"RESET": SubResource("Animation_itd86"),
+"blink": SubResource("Animation_cf0vx"),
+"death": SubResource("Animation_vvuct")
+}
 
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 2
@@ -29,6 +119,7 @@ collision_mask = 12
 shape = SubResource("RectangleShape2D_unjv5")
 
 [node name="Arms" type="Node2D" parent="."]
+position = Vector2(0, 19)
 
 [node name="Left" type="Area2D" parent="Arms"]
 collision_layer = 0
@@ -50,6 +141,12 @@ shape = SubResource("RectangleShape2D_7vx5l")
 wait_time = 0.2
 one_shot = true
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_ciqsh")
+}
+
+[connection signal="body_entered" from="Hitbox" to="." method="on_hitbox_entered"]
 [connection signal="body_entered" from="Arms/Left" to="." method="on_left_arm_enter"]
 [connection signal="body_exited" from="Arms/Left" to="." method="on_left_arm_exit"]
 [connection signal="body_entered" from="Arms/Right" to="." method="on_right_arm_enter"]

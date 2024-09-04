@@ -1,11 +1,39 @@
-[gd_scene load_steps=3 format=3 uid="uid://jixjah186mgf"]
+[gd_scene load_steps=6 format=3 uid="uid://jixjah186mgf"]
 
 [ext_resource type="PackedScene" uid="uid://8mnklhwexdq1" path="res://objects/plateform.tscn" id="1_4xvrj"]
 [ext_resource type="PackedScene" uid="uid://dxcbv1gkwim7d" path="res://player/packed_player.tscn" id="2_boudh"]
+[ext_resource type="PackedScene" uid="uid://u82ythi5tufs" path="res://objects/spikes.tscn" id="2_fksv7"]
+[ext_resource type="PackedScene" uid="uid://cs3qfyld1jud" path="res://objects/dangerous_square.tscn" id="3_pln7a"]
+[ext_resource type="PackedScene" uid="uid://d4b081fryfbus" path="res://objects/checkpoint.tscn" id="4_sr76q"]
 
 [node name="TestLevel" type="Node2D"]
 
 [node name="Map" type="Node2D" parent="."]
+
+[node name="HurtingSquare2" parent="Map" instance=ExtResource("3_pln7a")]
+position = Vector2(-1096, -462)
+rotation = -0.814551
+scale = Vector2(1.23994, 1.14652)
+lethal = true
+
+[node name="HurtingSquare" parent="Map" instance=ExtResource("3_pln7a")]
+position = Vector2(964, 312)
+rotation = 0.786559
+scale = Vector2(0.456575, 0.444914)
+
+[node name="Spikes" parent="Map" instance=ExtResource("2_fksv7")]
+position = Vector2(1876, 318)
+scale = Vector2(0.273175, 0.30029)
+lethal = true
+
+[node name="Spikes2" parent="Map" instance=ExtResource("2_fksv7")]
+position = Vector2(-61, 1396)
+scale = Vector2(0.33152, 0.718052)
+
+[node name="Spikes3" parent="Map" instance=ExtResource("2_fksv7")]
+position = Vector2(4067, 284)
+scale = Vector2(0.238212, 0.356946)
+lethal = true
 
 [node name="Plateform" parent="Map" instance=ExtResource("1_4xvrj")]
 position = Vector2(1480, 349)
@@ -19,4 +47,29 @@ scale = Vector2(1.48252, 0.583911)
 position = Vector2(-1126, 39)
 scale = Vector2(0.406527, 5.34207)
 
+[node name="Plateform4" parent="Map" instance=ExtResource("1_4xvrj")]
+position = Vector2(-273, -652)
+rotation = 1.83726
+scale = Vector2(0.474197, 0.972135)
+
+[node name="Plateform5" parent="Map" instance=ExtResource("1_4xvrj")]
+position = Vector2(2156, 917)
+rotation = -0.328724
+scale = Vector2(1.25176, 0.80487)
+
+[node name="Plateform6" parent="Map" instance=ExtResource("1_4xvrj")]
+position = Vector2(62, 1634)
+scale = Vector2(2.14432, 2.70719)
+
+[node name="Plateform7" parent="Map" instance=ExtResource("1_4xvrj")]
+position = Vector2(3922, 493)
+scale = Vector2(1.72915, 2.26955)
+
+[node name="Checkpoint" parent="Map" instance=ExtResource("4_sr76q")]
+position = Vector2(2925, -54)
+
+[node name="Checkpoint2" parent="Map" instance=ExtResource("4_sr76q")]
+position = Vector2(5023, -54)
+
 [node name="PackedPlayer" parent="." instance=ExtResource("2_boudh")]
+position = Vector2(0, 514)

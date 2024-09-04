@@ -1,0 +1,103 @@
+[gd_scene load_steps=9 format=3 uid="uid://d4b081fryfbus"]
+
+[ext_resource type="Texture2D" uid="uid://c8kv6d060cv1m" path="res://ressources/white_square.png" id="1_3n6yb"]
+[ext_resource type="Script" path="res://scripts/checkpoint.gd" id="1_ix751"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c0vrn"]
+size = Vector2(58, 609)
+
+[sub_resource type="Animation" id="Animation_6lt0s"]
+resource_name = "blink"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(0.294118, 0.65098, 1, 0.498039), Color(0.294118, 0.65098, 1, 0.117647), Color(0.294118, 0.65098, 1, 0.498039)]
+}
+
+[sub_resource type="Animation" id="Animation_qa5uk"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.294118, 0.65098, 1, 0.498039)]
+}
+
+[sub_resource type="Animation" id="Animation_yxxll"]
+resource_name = "check"
+length = 0.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(0.170755, 2.82843, 1),
+"update": 0,
+"values": [Color(0.294118, 0.65098, 1, 0.498039), Color(1, 1, 1, 0.498039), Color(0.294118, 0.65098, 1, 0.498039)]
+}
+
+[sub_resource type="Animation" id="Animation_6cieo"]
+resource_name = "blink2"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(0.172568, 0.75574, 0.296255, 0.498039), Color(0.172549, 0.756863, 0.298039, 0.117647), Color(0.172568, 0.75574, 0.296255, 0.498039)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_cqw7i"]
+_data = {
+"RESET": SubResource("Animation_qa5uk"),
+"blink": SubResource("Animation_6lt0s"),
+"blink2": SubResource("Animation_6cieo"),
+"check": SubResource("Animation_yxxll")
+}
+
+[node name="Checkpoint" type="Area2D"]
+collision_layer = 0
+script = ExtResource("1_ix751")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_c0vrn")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.294118, 0.65098, 1, 0.498039)
+texture_filter = 1
+rotation = 1.5708
+scale = Vector2(1.5, 0.3)
+texture = ExtResource("1_3n6yb")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_cqw7i")
+}
+
+[connection signal="body_entered" from="." to="." method="on_entered"]

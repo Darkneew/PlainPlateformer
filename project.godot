@@ -13,7 +13,7 @@ config_version=5
 config/name="plateformer"
 run/main_scene="res://levels/test_level.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="res://ressources/icon.svg"
 
 [input]
 
@@ -52,8 +52,8 @@ down={
 
 2d_physics/layer_1="player"
 2d_physics/layer_2="objects"
-2d_physics/layer_3="can_hurt"
-2d_physics/layer_4="can_kill"
+2d_physics/layer_3="dangerous"
+2d_physics/layer_4="lethal"
 2d_physics/layer_5="jumpeable"
 
 [rendering]

@@ -1,7 +1,10 @@
 extends CharacterBody2D
 
-enum State {Standing, Jumping, Rising, Midair, Falling, Dashing, Walling, Fastfalling}
+enum State {Standing, Jumping, Rising, Midair, Falling, Dashing, Walling, Fastfalling, Dying}
 enum Action {None, Dash, Jump}
+
+signal hearts_update(health: int)
+signal change_checkpoint()
 
 @export_group("Horizontal Mouvement")
 ## Maximum lateral speed for the player
@@ -38,11 +41,19 @@ enum Action {None, Dash, Jump}
 ## Purcentage of max velocity jump when jumping from a wall
 @export_range(0,1) var wall_velocity_reduction := 0.8
 
+@export_group("Obstacles")
+## Strength of the knockback received when touching a hurting object
+@export var knockback := 600.0
+
 @export_group("Advanced")
 ## Time frame the player has to buffer an action
 @export var buffer_time = 0.4
 ## Time frame where the player can jump after leaving ground, in milliseconds
 @export var ground_approximation = 100
+## Pack scene, packing the player
+@export var pack: Node2D
+## Camera following the player
+@export var camera: Node2D
 
 
 ## STATES
@@ -55,14 +66,13 @@ var _can_dash: bool
 var _left_wall: bool
 var _right_wall: bool
 var _last_time_on_ground: int
+var _health: int
+var _hurt: bool
 
 ## INIT
 func _ready() -> void:
-	_state = State.Fastfalling
-	_buffer = Action.None
-	_last_jump_velocity = jump_velocity_max
-	_can_dash = true
 	$Buffer.wait_time = buffer_time
+	start_level()
 
 ## BUFFER TIMEOUT
 func on_buffer_timeout():
@@ -71,6 +81,49 @@ func on_buffer_timeout():
 ## CUSTOM IS_ON_GROUND
 func is_on_ground():
 	return Time.get_ticks_msec() < _last_time_on_ground + ground_approximation
+
+## START LEVEL
+func start_level():
+	$AnimationPlayer.play("RESET")
+	_hurt = false
+	position = Vector2.ZERO
+	velocity = Vector2.ZERO
+	_state = State.Fastfalling
+	_buffer = Action.None
+	_last_jump_velocity = jump_velocity_max
+	_can_dash = true
+	_health = 3
+	hearts_update.emit(3)
+
+
+## DAMAGE
+func on_hitbox_entered(body: Node2D):
+	if body.collision_layer & 8:
+		die()
+	elif body.collision_layer & 4:
+		get_hurt()
+func get_hurt():
+	if _hurt: 
+		return
+	_health -= 1
+	velocity = - velocity.normalized() * knockback
+	velocity.x *= 1.5
+	hearts_update.emit(_health)
+	if _health == 0:
+		die()
+	else:
+		_hurt = true
+		$AnimationPlayer.play("blink")
+		get_tree().create_timer(1).timeout.connect(end_hurt)
+func end_hurt():
+	_hurt = false
+	$AnimationPlayer.play("RESET")
+func die():
+	hearts_update.emit(0)
+	_state = State.Dying
+	$AnimationPlayer.play("death")
+	get_tree().create_timer(1).timeout.connect(start_level)
+
 
 ## WALLS
 func on_left_arm_enter(_body: Node2D):
@@ -98,15 +151,30 @@ func wall_jump():
 	elif _right_wall:
 		velocity = Vector2(1, -2).normalized() * jump_velocity_max * wall_velocity_reduction
 	_state = State.Rising
-			
-			
+
+
+## CHECKPOINT 
+func checkpoint(pos):
+	if pack == null:
+		print("Failed to checkpoint. No packed scene referenced")
+		return
+	change_checkpoint.emit()
+	position += pack.position - pos
+	camera.position += pack.position - pos
+	pack.position = pos
+
+
 ## PROCESSES 
 func _process(_delta: float) -> void:
-	_state = update_states()
-	
 	## GROUND UPDATE
 	if is_on_floor():
 		_last_time_on_ground = Time.get_ticks_msec()
+	
+	## STATE CHECK
+	if _state == State.Dying or _state == State.Dashing:
+		return 
+	_state = update_states()
+	
 	
 	## FAST FALL
 	# fast fall
@@ -160,8 +228,13 @@ func _process(_delta: float) -> void:
 			$Buffer.start()
 
 func _physics_process(delta: float) -> void:
+	## DYING
+	if _state == State.Dying:
+		return
+	
 	## DASHING
 	if _state == State.Dashing:
+		move_and_slide()
 		return
 	
 	## JUMPING
@@ -203,7 +276,7 @@ func _physics_process(delta: float) -> void:
 
 ## STATES 
 func update_states():
-	if _state == State.Jumping or _state == State.Dashing:
+	if _state == State.Jumping or _state == State.Dashing or _state == State.Dying:
 		return _state
 	if _state == State.Standing and is_on_ground():
 		_last_jump_velocity = jump_velocity_max

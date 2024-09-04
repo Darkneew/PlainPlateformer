@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://cs3qfyld1jud"]
+
+[ext_resource type="Texture2D" uid="uid://c8kv6d060cv1m" path="res://ressources/white_square.png" id="1_5spy4"]
+[ext_resource type="Script" path="res://scripts/dangerous_square.gd" id="1_ajxl6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_61jgu"]
+size = Vector2(193, 194)
+
+[node name="DangerousSquare" type="StaticBody2D"]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_ajxl6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_61jgu")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0.647059, 0, 1)
+texture_filter = 1
+scale = Vector2(0.483333, 1.02577)
+texture = ExtResource("1_5spy4")

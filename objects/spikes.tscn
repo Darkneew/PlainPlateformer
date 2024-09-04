@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://u82ythi5tufs"]
+
+[ext_resource type="Script" path="res://scripts/spikes.gd" id="1_aabpr"]
+[ext_resource type="PackedScene" uid="uid://cs3qfyld1jud" path="res://objects/dangerous_square.tscn" id="2_hrj3i"]
+
+[node name="Spikes" type="Node2D"]
+script = ExtResource("1_aabpr")
+
+[node name="DangerousSquare" parent="." instance=ExtResource("2_hrj3i")]
+position = Vector2(120, 0)
+rotation = 0.785398
+
+[node name="DangerousSquare2" parent="." instance=ExtResource("2_hrj3i")]
+position = Vector2(360, 0)
+rotation = 0.785398
+
+[node name="DangerousSquare3" parent="." instance=ExtResource("2_hrj3i")]
+position = Vector2(600, 0)
+rotation = 0.785398
+
+[node name="DangerousSquare4" parent="." instance=ExtResource("2_hrj3i")]
+position = Vector2(-120, 0)
+rotation = 0.785398
+
+[node name="DangerousSquare5" parent="." instance=ExtResource("2_hrj3i")]
+position = Vector2(-360, 0)
+rotation = 0.785398
+
+[node name="DangerousSquare6" parent="." instance=ExtResource("2_hrj3i")]
+position = Vector2(-600, 0)
+rotation = 0.785398
