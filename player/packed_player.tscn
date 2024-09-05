@@ -62,6 +62,24 @@ offset_bottom = 58.0
 theme = ExtResource("6_ni6oo")
 text = "Dash"
 
+[node name="Win" type="RichTextLabel" parent="PlayerUI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -415.0
+offset_top = -78.0
+offset_right = 415.0
+offset_bottom = 78.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("6_ni6oo")
+theme_override_font_sizes/normal_font_size = 120
+text = "YOU WON"
+
 [connection signal="dash_time_update" from="Player" to="PlayerUI" method="dash_update"]
 [connection signal="hearts_update" from="Player" to="PlayerUI" method="hearts_update"]
+[connection signal="win" from="Player" to="PlayerUI" method="win"]
 [connection signal="pressed" from="PlayerUI/Restart" to="PlayerUI" method="restart"]

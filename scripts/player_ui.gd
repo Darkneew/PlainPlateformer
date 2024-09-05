@@ -13,3 +13,6 @@ func restart():
 
 func dash_update(value: float):
 	$DashTimer.value = value
+
+func win():
+	$Win.visible = true

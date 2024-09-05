@@ -7,6 +7,7 @@ signal hearts_update(health: int)
 signal change_checkpoint()
 signal restart()
 signal dash_time_update(time: float)
+signal win()
 
 @export_group("Horizontal Mouvement")
 ## Maximum lateral speed for the player
@@ -96,6 +97,10 @@ func init():
 	$DashTimer.wait_time = dash_time
 	start_level()
 	
+## WIN
+func on_win():
+	win.emit()
+	_state = State.Dying
 
 ## BUFFER TIMEOUT
 func on_buffer_timeout():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://jixjah186mgf"]
+[gd_scene load_steps=17 format=3 uid="uid://jixjah186mgf"]
 
 [ext_resource type="PackedScene" uid="uid://8mnklhwexdq1" path="res://objects/plateform.tscn" id="1_4xvrj"]
 [ext_resource type="PackedScene" uid="uid://dxcbv1gkwim7d" path="res://player/packed_player.tscn" id="2_boudh"]
@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://vdr2vw3ksb7d" path="res://objects/heal_pack.tscn" id="12_7fwfb"]
 [ext_resource type="PackedScene" uid="uid://dk3ei7b441mjl" path="res://objects/vanishing_plateform.tscn" id="13_aowa8"]
 [ext_resource type="PackedScene" uid="uid://bhqeple1dm8k1" path="res://objects/spring.tscn" id="14_l5p6v"]
+[ext_resource type="PackedScene" uid="uid://bib0wqp0qpsfn" path="res://objects/objective.tscn" id="16_d0mca"]
 
 [node name="TestLevel" type="Node2D"]
 
@@ -152,3 +153,6 @@ position = Vector2(-762, 609)
 
 [node name="PackedPlayer" parent="." instance=ExtResource("2_boudh")]
 position = Vector2(-11, 598)
+
+[node name="Objective" parent="." instance=ExtResource("16_d0mca")]
+position = Vector2(4620, 146)
