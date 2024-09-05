@@ -1,25 +1,34 @@
-[gd_scene load_steps=6 format=3 uid="uid://jixjah186mgf"]
+[gd_scene load_steps=10 format=3 uid="uid://jixjah186mgf"]
 
 [ext_resource type="PackedScene" uid="uid://8mnklhwexdq1" path="res://objects/plateform.tscn" id="1_4xvrj"]
 [ext_resource type="PackedScene" uid="uid://dxcbv1gkwim7d" path="res://player/packed_player.tscn" id="2_boudh"]
 [ext_resource type="PackedScene" uid="uid://u82ythi5tufs" path="res://objects/spikes.tscn" id="2_fksv7"]
 [ext_resource type="PackedScene" uid="uid://cs3qfyld1jud" path="res://objects/dangerous_square.tscn" id="3_pln7a"]
 [ext_resource type="PackedScene" uid="uid://d4b081fryfbus" path="res://objects/checkpoint.tscn" id="4_sr76q"]
+[ext_resource type="PackedScene" uid="uid://cb45vuswg0vnf" path="res://objects/box.tscn" id="6_378bo"]
+[ext_resource type="PackedScene" uid="uid://btb4xn86umhie" path="res://objects/map_limit.tscn" id="6_ov15t"]
+[ext_resource type="PackedScene" uid="uid://c4wxequfd0k6s" path="res://objects/bouncy_box.tscn" id="7_wa8ss"]
+[ext_resource type="PackedScene" uid="uid://6li7jvt5gp8u" path="res://objects/sloppy_wall.tscn" id="9_ctg0d"]
 
 [node name="TestLevel" type="Node2D"]
 
 [node name="Map" type="Node2D" parent="."]
 
-[node name="HurtingSquare2" parent="Map" instance=ExtResource("3_pln7a")]
+[node name="DangerousSquare2" parent="Map" instance=ExtResource("3_pln7a")]
 position = Vector2(-1096, -462)
 rotation = -0.814551
 scale = Vector2(1.23994, 1.14652)
 lethal = true
 
-[node name="HurtingSquare" parent="Map" instance=ExtResource("3_pln7a")]
+[node name="DangerousSquare3" parent="Map" instance=ExtResource("3_pln7a")]
 position = Vector2(964, 312)
 rotation = 0.786559
 scale = Vector2(0.456575, 0.444914)
+
+[node name="DangerousSquare" parent="Map" instance=ExtResource("3_pln7a")]
+position = Vector2(-1342, 1257)
+scale = Vector2(0.399714, 1.44474)
+lethal = true
 
 [node name="Spikes" parent="Map" instance=ExtResource("2_fksv7")]
 position = Vector2(1876, 318)
@@ -27,7 +36,7 @@ scale = Vector2(0.273175, 0.30029)
 lethal = true
 
 [node name="Spikes2" parent="Map" instance=ExtResource("2_fksv7")]
-position = Vector2(-61, 1396)
+position = Vector2(619, 1396)
 scale = Vector2(0.33152, 0.718052)
 
 [node name="Spikes3" parent="Map" instance=ExtResource("2_fksv7")]
@@ -70,6 +79,29 @@ position = Vector2(2925, -54)
 
 [node name="Checkpoint2" parent="Map" instance=ExtResource("4_sr76q")]
 position = Vector2(5023, -54)
+
+[node name="MapLimit" parent="Map" instance=ExtResource("6_ov15t")]
+position = Vector2(1613, 2677)
+
+[node name="SloppyWall" parent="Map" instance=ExtResource("9_ctg0d")]
+position = Vector2(267, -827)
+
+[node name="Box" parent="Map" instance=ExtResource("6_378bo")]
+position = Vector2(-972, 1328)
+
+[node name="Box2" parent="Map" instance=ExtResource("6_378bo")]
+position = Vector2(-872, 1336)
+
+[node name="Box3" parent="Map" instance=ExtResource("6_378bo")]
+position = Vector2(-919, 1201)
+size = 3.0
+
+[node name="Box4" parent="Map" instance=ExtResource("6_378bo")]
+position = Vector2(-516, 520)
+size = 2.0
+
+[node name="BouncyBox" parent="Map" instance=ExtResource("7_wa8ss")]
+position = Vector2(581, 563)
 
 [node name="PackedPlayer" parent="." instance=ExtResource("2_boudh")]
 position = Vector2(0, 514)

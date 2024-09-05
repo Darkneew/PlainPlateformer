@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cs3qfyld1jud" path="res://objects/dangerous_square.tscn" id="2_hrj3i"]
 
 [node name="Spikes" type="Node2D"]
+scale = Vector2(0.3, 0.3)
 script = ExtResource("1_aabpr")
 
 [node name="DangerousSquare" parent="." instance=ExtResource("2_hrj3i")]

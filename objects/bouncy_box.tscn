@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3 uid="uid://c4wxequfd0k6s"]
+
+[ext_resource type="Script" path="res://scripts/box.gd" id="1_do2i3"]
+[ext_resource type="Texture2D" uid="uid://c8kv6d060cv1m" path="res://ressources/white_square.png" id="2_abdq5"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_pb57u"]
+friction = 0.1
+bounce = 0.7
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v751x"]
+size = Vector2(54, 53)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_raf3c"]
+size = Vector2(58, 58)
+
+[node name="BouncyBox" type="RigidBody2D"]
+collision_layer = 32
+collision_mask = 55
+physics_material_override = SubResource("PhysicsMaterial_pb57u")
+script = ExtResource("1_do2i3")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_v751x")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_raf3c")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.863223, 0.305073, 0.807511, 1)
+scale = Vector2(0.144, 0.3)
+texture = ExtResource("2_abdq5")
+
+[connection signal="body_entered" from="Area2D" to="." method="kill"]

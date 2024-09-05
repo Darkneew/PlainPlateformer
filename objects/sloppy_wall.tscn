@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://6li7jvt5gp8u"]
+
+[ext_resource type="Texture2D" uid="uid://c8kv6d060cv1m" path="res://ressources/white_square.png" id="1_q120a"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_thsqg"]
+size = Vector2(1374, 194)
+
+[node name="NonJumpeablePlateform" type="StaticBody2D"]
+rotation = 1.5708
+scale = Vector2(0.8, 0.5)
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_thsqg")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0.792157, 0.976471, 1)
+texture_filter = 1
+scale = Vector2(3.38333, 1)
+texture = ExtResource("1_q120a")

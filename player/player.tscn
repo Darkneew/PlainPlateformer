@@ -9,23 +9,6 @@ size = Vector2(79.5, 144)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7vx5l"]
 size = Vector2(20, 68.5)
 
-[sub_resource type="Animation" id="Animation_cf0vx"]
-resource_name = "blink"
-length = 0.5
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.266667, 0.5),
-"transitions": PackedFloat32Array(0.217637, 4.59479, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.27451), Color(1, 1, 1, 1)]
-}
-
 [sub_resource type="Animation" id="Animation_itd86"]
 length = 0.001
 tracks/0/type = "value"
@@ -65,6 +48,23 @@ tracks/2/keys = {
 "values": [Vector2(1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_cf0vx"]
+resource_name = "blink"
+length = 0.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.266667, 0.5),
+"transitions": PackedFloat32Array(0.217637, 4.59479, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.27451), Color(1, 1, 1, 1)]
+}
+
 [sub_resource type="Animation" id="Animation_vvuct"]
 resource_name = "death"
 tracks/0/type = "value"
@@ -100,8 +100,9 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody2D"]
-collision_mask = 2
+collision_mask = 34
 floor_stop_on_slope = false
+platform_floor_layers = 4294967263
 script = ExtResource("1_wv7yv")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -145,6 +146,10 @@ one_shot = true
 libraries = {
 "": SubResource("AnimationLibrary_ciqsh")
 }
+
+[node name="DashTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
 
 [connection signal="body_entered" from="Hitbox" to="." method="on_hitbox_entered"]
 [connection signal="body_entered" from="Arms/Left" to="." method="on_left_arm_enter"]

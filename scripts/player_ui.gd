@@ -7,3 +7,9 @@ func hearts_update(nb: int):
 		$Hearts.texture = null
 	else:
 		$Hearts.texture = hearts[nb-1]
+
+func restart():
+	get_tree().reload_current_scene()
+
+func dash_update(value: float):
+	$DashTimer.value = value

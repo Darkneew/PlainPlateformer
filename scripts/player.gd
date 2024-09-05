@@ -5,6 +5,8 @@ enum Action {None, Dash, Jump}
 
 signal hearts_update(health: int)
 signal change_checkpoint()
+signal restart()
+signal dash_time_update(time: float)
 
 @export_group("Horizontal Mouvement")
 ## Maximum lateral speed for the player
@@ -17,18 +19,9 @@ signal change_checkpoint()
 @export var zero_velocity_margin := 10.0
 
 @export_group("Vertical Movement")
-@export_subgroup("Jump")
-## Minimal jump velocity, if the jump key is immediatly released
-@export var jump_velocity_min := 500.0
-## Maximal jump velocity, if the jump key is never released
-@export var jump_velocity_max := 1000.0
-## Time to press the jump key to get the highest jump possible, in milliseconds
-@export var allowed_jumping_time := 200.0
 @export_subgroup("Gravity and Aerial Trajectory")
 ## Gravity for the player
 @export var gravity := 1100.0
-## Gravity for the player when he crouches in the air
-@export var fast_gravity := 3000.0
 ## Gravity for the player when at the highest point of his jump, allows for a more pleasant jump
 @export var midair_gravity := 600.0
 ## Limit defining when is the highest point of the jump, in purcentage of the initial velocity of the jump. Lower values will result in more natural jumps, higher values will give more "flying" jumps
@@ -41,9 +34,31 @@ signal change_checkpoint()
 ## Purcentage of max velocity jump when jumping from a wall
 @export_range(0,1) var wall_velocity_reduction := 0.8
 
-@export_group("Obstacles")
-## Strength of the knockback received when touching a hurting object
+@export_group("Actions")
+@export_subgroup("Crouch")
+## Gravity for the player when he crouches in the air
+@export var fast_gravity := 3000.0
+@export_subgroup("Dash")
+## Time before the player is able to dash again
+@export var dash_time := 5.0
+## Speed of the dash
+@export var dash_speed := 2000.0
+## Duration of the dash
+@export var dash_length := 0.2
+
+@export_subgroup("Jump")
+## Minimal jump velocity, if the jump key is immediatly released
+@export var jump_velocity_min := 500.0
+## Maximal jump velocity, if the jump key is never released
+@export var jump_velocity_max := 1000.0
+## Time to press the jump key to get the highest jump possible, in milliseconds
+@export var allowed_jumping_time := 200.0
+
+@export_group("Interactions")
+## Strength of the knockback received when touching a dangerous object
 @export var knockback := 600.0
+## Strength to push objects
+@export var push_strength := 100.0
 
 @export_group("Advanced")
 ## Time frame the player has to buffer an action
@@ -56,23 +71,29 @@ signal change_checkpoint()
 @export var camera: Node2D
 
 
+@onready var dashTimer: Timer = get_node("DashTimer")
+
 ## STATES
 var _begin_jump_time: int
 var _end_jump_time: int
 var _last_jump_velocity: float
 var _state: State
 var _buffer: Action 
-var _can_dash: bool
 var _left_wall: bool
 var _right_wall: bool
 var _last_time_on_ground: int
 var _health: int
 var _hurt: bool
+var _direction: int
 
 ## INIT
 func _ready() -> void:
+	init()
+func init():
 	$Buffer.wait_time = buffer_time
+	$DashTimer.wait_time = dash_time
 	start_level()
+	
 
 ## BUFFER TIMEOUT
 func on_buffer_timeout():
@@ -86,12 +107,12 @@ func is_on_ground():
 func start_level():
 	$AnimationPlayer.play("RESET")
 	_hurt = false
+	$DashTimer.stop()
 	position = Vector2.ZERO
 	velocity = Vector2.ZERO
 	_state = State.Fastfalling
 	_buffer = Action.None
 	_last_jump_velocity = jump_velocity_max
-	_can_dash = true
 	_health = 3
 	hearts_update.emit(3)
 
@@ -103,6 +124,8 @@ func on_hitbox_entered(body: Node2D):
 	elif body.collision_layer & 4:
 		get_hurt()
 func get_hurt():
+	if _state == State.Dashing:
+		return
 	if _hurt: 
 		return
 	_health -= 1
@@ -119,7 +142,12 @@ func end_hurt():
 	_hurt = false
 	$AnimationPlayer.play("RESET")
 func die():
+	if _state == State.Dashing:
+		return
+	if _hurt: 
+		return
 	hearts_update.emit(0)
+	restart.emit()
 	_state = State.Dying
 	$AnimationPlayer.play("death")
 	get_tree().create_timer(1).timeout.connect(start_level)
@@ -153,6 +181,14 @@ func wall_jump():
 	_state = State.Rising
 
 
+## CUSTOM MOVE_AND_SLIDE
+func move():
+	move_and_slide()
+	for i in range(get_slide_collision_count()):
+		var c = get_slide_collision(i)
+		if c.get_collider().collision_layer & 32:
+				c.get_collider().apply_central_impulse(-c.get_normal() * push_strength)
+
 ## CHECKPOINT 
 func checkpoint(pos):
 	if pack == null:
@@ -164,8 +200,25 @@ func checkpoint(pos):
 	pack.position = pos
 
 
+## DASH 
+func start_dash():
+	_state = State.Dashing
+	dashTimer.start()
+	get_tree().create_timer(dash_length).timeout.connect(end_dash)
+func end_dash():
+	_state = State.Standing
+	update_states()
+func on_dash_ready():
+	if _buffer == Action.Dash:
+		start_dash()
+		_buffer = Action.None
+
+
 ## PROCESSES 
 func _process(_delta: float) -> void:
+	## DASH TIMER UPDATE
+	dash_time_update.emit((1-dashTimer.time_left/ dash_time)*100)
+	
 	## GROUND UPDATE
 	if is_on_floor():
 		_last_time_on_ground = Time.get_ticks_msec()
@@ -221,8 +274,8 @@ func _process(_delta: float) -> void:
 	
 	## DASH
 	if Input.is_action_just_pressed("dash"):
-		if _can_dash:
-			_can_dash = false
+		if dashTimer.time_left == 0:
+			start_dash()
 		else:
 			_buffer = Action.Dash
 			$Buffer.start()
@@ -231,10 +284,12 @@ func _physics_process(delta: float) -> void:
 	## DYING
 	if _state == State.Dying:
 		return
+	State.Dashing
 	
 	## DASHING
 	if _state == State.Dashing:
-		move_and_slide()
+		velocity = Vector2(_direction * dash_speed, 0)
+		move()
 		return
 	
 	## JUMPING
@@ -264,6 +319,7 @@ func _physics_process(delta: float) -> void:
 	var _strength = strength if _state == State.Standing or _state == State.Walling else midair_strength
 	if direction:
 		velocity.x += direction * delta * _strength
+		_direction = sign(direction)
 	else:
 		velocity.x -= sign(velocity.x) * delta * _strength / 2
 		if abs(velocity.x) < zero_velocity_margin:
@@ -271,7 +327,7 @@ func _physics_process(delta: float) -> void:
 	if abs(velocity.x) > max_speed:
 		velocity.x = sign(velocity.x) * max_speed
 
-	move_and_slide()
+	move()
 
 
 ## STATES 
