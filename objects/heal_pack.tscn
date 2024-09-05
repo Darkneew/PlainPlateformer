@@ -1,0 +1,93 @@
+[gd_scene load_steps=8 format=3 uid="uid://vdr2vw3ksb7d"]
+
+[ext_resource type="Texture2D" uid="uid://qisqv7mk4dm4" path="res://ressources/coeur_1.png" id="1_a8vj6"]
+[ext_resource type="Script" path="res://scripts/heal_pack.gd" id="1_ni3xa"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xhbc2"]
+radius = 36.0139
+
+[sub_resource type="Animation" id="Animation_48r5f"]
+resource_name = "float"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 2.82843, 2.73208),
+"update": 0,
+"values": [Vector2(3, 0), Vector2(3, -30), Vector2(3, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_ooriy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(3, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(6, 6)]
+}
+
+[sub_resource type="Animation" id="Animation_bjdu8"]
+resource_name = "pickup"
+length = 0.6
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.133333, 0.3, 0.466667, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(6, 6), Vector2(0, 6), Vector2(6, 6), Vector2(0, 6), Vector2(6, 6)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_sbaw2"]
+_data = {
+"RESET": SubResource("Animation_ooriy"),
+"float": SubResource("Animation_48r5f"),
+"pickup": SubResource("Animation_bjdu8")
+}
+
+[node name="HealPack" type="Area2D"]
+collision_layer = 0
+script = ExtResource("1_ni3xa")
+
+[node name="Hitbox" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_xhbc2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(3, 1)
+scale = Vector2(6, 6)
+texture = ExtResource("1_a8vj6")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_sbaw2")
+}
+
+[connection signal="body_entered" from="." to="." method="on_pickup"]

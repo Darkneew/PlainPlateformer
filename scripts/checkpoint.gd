@@ -14,7 +14,9 @@ func on_entered(body: Node2D):
 	collision_mask = 0
 	get_tree().create_timer(1).timeout.connect(blink2)
 	_reset_immune = true
-	body.checkpoint(position)
+	var _pos = position
+	_pos.y += 80
+	body.checkpoint(_pos)
 	
 func blink2():
 	if $AnimationPlayer.current_animation == "check": 

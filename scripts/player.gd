@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-enum State {Standing, Jumping, Rising, Midair, Falling, Dashing, Walling, Fastfalling, Dying}
+enum State {Standing, Jumping, Rising, Midair, Falling, Dashing, Walling, Fastfalling, Dying, Crouching}
 enum Action {None, Dash, Jump}
 
 signal hearts_update(health: int)
@@ -36,11 +36,13 @@ signal dash_time_update(time: float)
 
 @export_group("Actions")
 @export_subgroup("Crouch")
+## Maximum lateral speed for the player when crouching
+@export var crouch_max_speed := 200.0
 ## Gravity for the player when he crouches in the air
 @export var fast_gravity := 3000.0
 @export_subgroup("Dash")
 ## Time before the player is able to dash again
-@export var dash_time := 5.0
+@export var dash_time := 3.0
 ## Speed of the dash
 @export var dash_speed := 2000.0
 ## Duration of the dash
@@ -108,6 +110,7 @@ func start_level():
 	$AnimationPlayer.play("RESET")
 	_hurt = false
 	$DashTimer.stop()
+	collision_mask = 34
 	position = Vector2.ZERO
 	velocity = Vector2.ZERO
 	_state = State.Fastfalling
@@ -136,28 +139,40 @@ func get_hurt():
 		die()
 	else:
 		_hurt = true
+		if _state == State.Crouching:
+			$AnimationPlayer.play("RESET")
+			_state = State.Standing
 		$AnimationPlayer.play("blink")
 		get_tree().create_timer(1).timeout.connect(end_hurt)
 func end_hurt():
 	_hurt = false
-	$AnimationPlayer.play("RESET")
+	$AnimationPlayer.stop()
 func die():
 	if _state == State.Dashing:
 		return
 	if _hurt: 
 		return
+	collision_mask = 0
 	hearts_update.emit(0)
 	restart.emit()
 	_state = State.Dying
 	$AnimationPlayer.play("death")
 	get_tree().create_timer(1).timeout.connect(start_level)
-
+func heal() -> bool:
+	if _health == 3: 
+		return false
+	_health += 1
+	hearts_update.emit(_health)
+	return true
 
 ## WALLS
 func on_left_arm_enter(_body: Node2D):
 	_left_wall = true
 	if _state == State.Rising or _state == State.Midair or _state == State.Falling or _state == State.Fastfalling:
-		_state = State.Walling
+		if Input.is_action_pressed("jump"):
+			wall_jump()
+		else:
+			_state = State.Walling
 func on_left_arm_exit(_body: Node2D):
 	_left_wall = false
 	if _state == State.Walling:
@@ -165,7 +180,10 @@ func on_left_arm_exit(_body: Node2D):
 func on_right_arm_enter(_body: Node2D):
 	_right_wall = true
 	if _state == State.Rising or _state == State.Midair or _state == State.Falling or _state == State.Fastfalling:
-		_state = State.Walling
+		if Input.is_action_pressed("jump"):
+			wall_jump()
+		else:
+			_state = State.Walling
 func on_right_arm_exit(_body: Node2D):
 	_right_wall = false
 	if _state == State.Walling:
@@ -206,8 +224,10 @@ func start_dash():
 	dashTimer.start()
 	get_tree().create_timer(dash_length).timeout.connect(end_dash)
 func end_dash():
-	_state = State.Standing
-	update_states()
+	if _left_wall or _right_wall:
+		_state = State.Walling
+	else:
+		_state = State.Falling
 func on_dash_ready():
 	if _buffer == Action.Dash:
 		start_dash()
@@ -241,13 +261,18 @@ func _process(_delta: float) -> void:
 		_begin_jump_time = Time.get_ticks_msec()
 		if _state == State.Standing:
 			_state = State.Jumping
+		elif _state == State.Crouching:
+			$AnimationPlayer.play("uncrouch")
+			_state = State.Jumping
 		elif _state == State.Walling:
 			wall_jump()
 		else:
 			_buffer = Action.Jump
 			$Buffer.start()
 	if _buffer == Action.Jump:
-		if _state == State.Standing:
+		if _state == State.Standing or _state == State.Crouching:
+			if _state == State.Crouching:
+				$AnimationPlayer.play("uncrouch")
 			if _end_jump_time < 0:
 				_buffer = Action.None
 				_state = State.Jumping
@@ -281,10 +306,14 @@ func _process(_delta: float) -> void:
 			$Buffer.start()
 
 func _physics_process(delta: float) -> void:
+	
 	## DYING
 	if _state == State.Dying:
 		return
-	State.Dashing
+		
+	## GET SQUISHED
+	if is_on_ceiling() and is_on_ground():
+		die()
 	
 	## DASHING
 	if _state == State.Dashing:
@@ -316,7 +345,7 @@ func _physics_process(delta: float) -> void:
 			
 	## LATERAL MOVEMENT
 	var direction := Input.get_axis("left", "right")
-	var _strength = strength if _state == State.Standing or _state == State.Walling else midair_strength
+	var _strength = strength if _state == State.Standing or _state == State.Walling or _state == State.Crouching else midair_strength
 	if direction:
 		velocity.x += direction * delta * _strength
 		_direction = sign(direction)
@@ -324,7 +353,9 @@ func _physics_process(delta: float) -> void:
 		velocity.x -= sign(velocity.x) * delta * _strength / 2
 		if abs(velocity.x) < zero_velocity_margin:
 			velocity.x = 0
-	if abs(velocity.x) > max_speed:
+	if _state == State.Crouching and abs(velocity.x) > crouch_max_speed:
+		velocity.x = sign(velocity.x) * crouch_max_speed
+	elif abs(velocity.x) > max_speed:
 		velocity.x = sign(velocity.x) * max_speed
 
 	move()
@@ -336,10 +367,27 @@ func update_states():
 		return _state
 	if _state == State.Standing and is_on_ground():
 		_last_jump_velocity = jump_velocity_max
+		if Input.is_action_pressed("down"):
+			$AnimationPlayer.play("crouch")
+			return State.Crouching
+		return _state
+	if _state == State.Crouching and is_on_ground(): 
+		_last_jump_velocity = jump_velocity_max
+		if Input.is_action_pressed("down"):
+			return _state
+		$AnimationPlayer.play("uncrouch")
 		return State.Standing
 	if is_on_floor():
 		_last_jump_velocity = jump_velocity_max
+		if Input.is_action_pressed("jump"):
+			_begin_jump_time = Time.get_ticks_msec()
+			return State.Jumping
+		elif Input.is_action_pressed("down"):
+			$AnimationPlayer.play("crouch")
+			return State.Crouching
 		return State.Standing
+	if _state == State.Crouching:
+		$AnimationPlayer.play("uncrouch")
 	if _state == State.Walling or _state == State.Fastfalling:
 		return _state
 	if abs(velocity.y) < _last_jump_velocity * midair_limit:

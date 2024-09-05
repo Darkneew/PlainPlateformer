@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bb6fu5n5x5l4l"]
+[gd_scene load_steps=11 format=3 uid="uid://bb6fu5n5x5l4l"]
 
 [ext_resource type="Texture2D" uid="uid://bmfh4xyqm6f0d" path="res://ressources/black_rectangle.png" id="1_v2s8m"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_wv7yv"]
@@ -42,6 +42,18 @@ tracks/2/path = NodePath("Sprite2D:scale")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -92,11 +104,45 @@ tracks/1/keys = {
 "values": [Vector2(1, 1), Vector2(1e-05, 1e-05)]
 }
 
+[sub_resource type="Animation" id="Animation_ulmw7"]
+resource_name = "crouch"
+length = 0.17
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.166667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1, 0.3)]
+}
+
+[sub_resource type="Animation" id="Animation_thwwf"]
+resource_name = "uncrouch"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 0.3), Vector2(1, 1)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ciqsh"]
 _data = {
 "RESET": SubResource("Animation_itd86"),
 "blink": SubResource("Animation_cf0vx"),
-"death": SubResource("Animation_vvuct")
+"crouch": SubResource("Animation_ulmw7"),
+"death": SubResource("Animation_vvuct"),
+"uncrouch": SubResource("Animation_thwwf")
 }
 
 [node name="Player" type="CharacterBody2D"]
@@ -107,12 +153,15 @@ script = ExtResource("1_wv7yv")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
+position = Vector2(0, -80)
 texture = ExtResource("1_v2s8m")
 
 [node name="PhysicalMesh" type="CollisionPolygon2D" parent="."]
+position = Vector2(0, -80)
 polygon = PackedVector2Array(-34, -80, 34, -80, 48, -67, 48, 67, 34, 80, -34, 80, -48, 67, -48, -67)
 
 [node name="Hitbox" type="Area2D" parent="."]
+position = Vector2(0, -80)
 collision_layer = 0
 collision_mask = 12
 
@@ -120,7 +169,7 @@ collision_mask = 12
 shape = SubResource("RectangleShape2D_unjv5")
 
 [node name="Arms" type="Node2D" parent="."]
-position = Vector2(0, 19)
+position = Vector2(0, -61)
 
 [node name="Left" type="Area2D" parent="Arms"]
 collision_layer = 0
@@ -148,7 +197,7 @@ libraries = {
 }
 
 [node name="DashTimer" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 3.0
 one_shot = true
 
 [connection signal="body_entered" from="Hitbox" to="." method="on_hitbox_entered"]

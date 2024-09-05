@@ -28,11 +28,13 @@ extends Node2D
 
 @export_group("Actions")
 @export_subgroup("Crouch")
+## Maximum lateral speed for the player when crouching
+@export var crouch_max_speed := 200.0
 ## Gravity for the player when he crouches in the air
 @export var fast_gravity := 3000.0
 @export_subgroup("Dash")
 ## Time before the player is able to dash again
-@export var dash_time := 5.0
+@export var dash_time := 3.0
 ## Speed of the dash
 @export var dash_speed := 2000.0
 ## Duration of the dash
@@ -57,10 +59,6 @@ extends Node2D
 @export var buffer_time = 0.4
 ## Time frame where the player can jump after leaving ground, in milliseconds
 @export var ground_approximation = 100
-## Pack scene, packing the player
-@export var pack: Node2D
-## Camera following the player
-@export var camera: Node2D
 
 @export_group("Camera")
 ## Zoom of the camera
@@ -85,6 +83,7 @@ func _ready() -> void:
 	player.wall_gravity = wall_gravity
 	player.wall_velocity_reduction = wall_velocity_reduction
 	
+	player.crouch_max_speed = crouch_max_speed
 	player.fast_gravity = fast_gravity
 	player.dash_time = dash_time
 	player.dash_speed = dash_speed

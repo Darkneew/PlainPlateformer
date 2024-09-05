@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://cn2w62tvjkri3"]
+
+[ext_resource type="Texture2D" uid="uid://c8kv6d060cv1m" path="res://ressources/white_square.png" id="1_6t5gq"]
+[ext_resource type="Script" path="res://scripts/moving_plateform.gd" id="1_dnb1n"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bye1a"]
+size = Vector2(1374, 194)
+
+[node name="MovingPlateform" type="CharacterBody2D"]
+scale = Vector2(0.5, 0.4)
+collision_layer = 18
+collision_mask = 0
+script = ExtResource("1_dnb1n")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_bye1a")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(3.38333, 1)
+texture = ExtResource("1_6t5gq")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="next_journey"]

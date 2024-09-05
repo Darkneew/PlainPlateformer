@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://jixjah186mgf"]
+[gd_scene load_steps=16 format=3 uid="uid://jixjah186mgf"]
 
 [ext_resource type="PackedScene" uid="uid://8mnklhwexdq1" path="res://objects/plateform.tscn" id="1_4xvrj"]
 [ext_resource type="PackedScene" uid="uid://dxcbv1gkwim7d" path="res://player/packed_player.tscn" id="2_boudh"]
@@ -9,10 +9,21 @@
 [ext_resource type="PackedScene" uid="uid://btb4xn86umhie" path="res://objects/map_limit.tscn" id="6_ov15t"]
 [ext_resource type="PackedScene" uid="uid://c4wxequfd0k6s" path="res://objects/bouncy_box.tscn" id="7_wa8ss"]
 [ext_resource type="PackedScene" uid="uid://6li7jvt5gp8u" path="res://objects/sloppy_wall.tscn" id="9_ctg0d"]
+[ext_resource type="PackedScene" uid="uid://cn2w62tvjkri3" path="res://objects/moving_plateform.tscn" id="10_axy4y"]
+[ext_resource type="PackedScene" uid="uid://d1qo26ii04b4k" path="res://objects/target.tscn" id="10_frnnw"]
+[ext_resource type="PackedScene" uid="uid://x4241gsnkpqi" path="res://objects/moving_lethal_block.tscn" id="11_pw1hw"]
+[ext_resource type="PackedScene" uid="uid://vdr2vw3ksb7d" path="res://objects/heal_pack.tscn" id="12_7fwfb"]
+[ext_resource type="PackedScene" uid="uid://dk3ei7b441mjl" path="res://objects/vanishing_plateform.tscn" id="13_aowa8"]
+[ext_resource type="PackedScene" uid="uid://bhqeple1dm8k1" path="res://objects/spring.tscn" id="14_l5p6v"]
 
 [node name="TestLevel" type="Node2D"]
 
 [node name="Map" type="Node2D" parent="."]
+
+[node name="DangerousSquare" parent="Map" instance=ExtResource("3_pln7a")]
+position = Vector2(-1342, 1257)
+scale = Vector2(0.399714, 1.44474)
+lethal = true
 
 [node name="DangerousSquare2" parent="Map" instance=ExtResource("3_pln7a")]
 position = Vector2(-1096, -462)
@@ -24,11 +35,6 @@ lethal = true
 position = Vector2(964, 312)
 rotation = 0.786559
 scale = Vector2(0.456575, 0.444914)
-
-[node name="DangerousSquare" parent="Map" instance=ExtResource("3_pln7a")]
-position = Vector2(-1342, 1257)
-scale = Vector2(0.399714, 1.44474)
-lethal = true
 
 [node name="Spikes" parent="Map" instance=ExtResource("2_fksv7")]
 position = Vector2(1876, 318)
@@ -81,7 +87,7 @@ position = Vector2(2925, -54)
 position = Vector2(5023, -54)
 
 [node name="MapLimit" parent="Map" instance=ExtResource("6_ov15t")]
-position = Vector2(1613, 2677)
+position = Vector2(1619, 2835)
 
 [node name="SloppyWall" parent="Map" instance=ExtResource("9_ctg0d")]
 position = Vector2(267, -827)
@@ -100,8 +106,49 @@ size = 3.0
 position = Vector2(-516, 520)
 size = 2.0
 
+[node name="Target" parent="Map" instance=ExtResource("10_frnnw")]
+position = Vector2(1291, -988)
+
+[node name="Target2" parent="Map" instance=ExtResource("10_frnnw")]
+position = Vector2(448, -1102)
+
 [node name="BouncyBox" parent="Map" instance=ExtResource("7_wa8ss")]
 position = Vector2(581, 563)
 
+[node name="Plateform8" parent="Map" instance=ExtResource("1_4xvrj")]
+position = Vector2(611, -375)
+scale = Vector2(0.434552, 1)
+
+[node name="MovingPlateform" parent="Map" node_paths=PackedStringArray("target") instance=ExtResource("10_axy4y")]
+position = Vector2(6373, 93)
+time_outward = 10.0
+time_return = 10.0
+target = NodePath("../Target")
+
+[node name="MovingLethalBlock" parent="Map" node_paths=PackedStringArray("target") instance=ExtResource("11_pw1hw")]
+position = Vector2(448, -572)
+time_return = 0.5
+target = NodePath("../Target2")
+
+[node name="HealPack" parent="Map" instance=ExtResource("12_7fwfb")]
+position = Vector2(-179, 1311)
+
+[node name="VanishingPlateform" parent="Map" instance=ExtResource("13_aowa8")]
+position = Vector2(-1762, 1004)
+
+[node name="Plateform9" parent="Map" instance=ExtResource("1_4xvrj")]
+position = Vector2(5585, 923)
+scale = Vector2(0.937467, 0.727251)
+
+[node name="MovingPlateform2" parent="Map" node_paths=PackedStringArray("target") instance=ExtResource("10_axy4y")]
+position = Vector2(5528, 906)
+target = NodePath("../Target3")
+
+[node name="Target3" parent="Map" instance=ExtResource("10_frnnw")]
+position = Vector2(5528, 182)
+
+[node name="Spring" parent="Map" instance=ExtResource("14_l5p6v")]
+position = Vector2(-762, 609)
+
 [node name="PackedPlayer" parent="." instance=ExtResource("2_boudh")]
-position = Vector2(0, 514)
+position = Vector2(-11, 598)
